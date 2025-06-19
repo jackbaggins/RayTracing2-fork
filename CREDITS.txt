@@ -1,0 +1,14 @@
+autumn_kitten: https://sketchfab.com/3d-models/autumn-kitten-2e474c8853174d17994504c19902bf01
+building: https://free3d.com/3d-model/buildinghouse-04-40137.html
+campfire: https://poly.pizza/m/dxxHpVXHLZg
+cat: https://www.printables.com/model/499926-low-poly-cat-20-decoration-no-supports
+dragon: https://sketchfab.com/3d-models/dragon-hunting-8e079f2c7a7f45bcb2ca83b00bd167e6
+ghetto: https://free3d.com/3d-model/futuristic-ghetto-building-23385.html
+lego jet: https://free3d.com/3d-model/lego-creator-plane-4953-24788.html
+mccree: https://sketchfab.com/3d-models/low-poly-mccree-38aedc02c0b2412babdc4d0eac7c6803
+plants: https://sketchfab.com/3d-models/plants-kit-6c2980169c1e44e499d94a67c1752477
+rin: https://sketchfab.com/3d-models/3ds-hatsune-miku-project-mirai-2-rin-figure-decc6b56d3c747fda41d209899bd10f6?fbclid=IwY2xjawK956lleHRuA2FlbQIxMABicmlkETFIOVJGN0FvdzhSbTlvbFh3AR4mGoJlSxTU6dBZDrB-AWJSPJyApwT3SOijPQkS46HkZor7SJdFtQb5UWckOA_aem_kR3KrhsQwOIOOnjQGQnP7Q
+robot: https://sketchfab.com/3d-models/htt-7883d4c33dfa4338b33522c3c62c9616
+toonHouse: https://sketchfab.com/3d-models/toon-houses-day-version-3a33d33a6813410882f63d18c8189755
+trees: https://sketchfab.com/3d-models/low-poly-trees-2e70c34af8994852acd4b9ffce596336
+windmill: https://free3d.com/3d-model/cartoon-mill-on-island-low-poly-25625.html
