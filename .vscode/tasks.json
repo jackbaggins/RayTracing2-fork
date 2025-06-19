@@ -1,0 +1,78 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build active file",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
+            "args": [
+                "-std=c++17", 
+                "-fdiagnostics-color=always",
+                "-g",
+
+                "-I${workspaceFolder}/headers",
+                "-I${workspaceFolder}/include",
+                "-I${workspaceFolder}/include/OpenGL",
+                "-I${workspaceFolder}/RayTracing",
+                "-L${workspaceFolder}/lib",
+
+                // Project-specific cpp files goes here
+                "${workspaceFolder}\\RayTracing\\src\\rayTracing.cpp",
+                "${workspaceFolder}\\lib\\glad.c",
+
+                "${workspaceFolder}\\include\\OpenGL\\utils.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\VAO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\VBO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\EBO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\FBO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\UBO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\SSBO.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\shaderClass.cpp",
+                "${workspaceFolder}\\include\\OpenGL\\textureClass.cpp",
+                "${workspaceFolder}\\include\\filesUtil\\myFile.cpp",
+                "${workspaceFolder}\\include\\stb\\stb_impl.cpp",
+
+                "-lglfw3dll",
+
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "compiler: C:/msys64/ucrt64/bin/g++.exe"
+        },
+        {
+            "type": "shell",
+            "label": "Run Program",
+            "dependsOn": "C/C++: g++.exe build active file",
+            "command": "cmd.exe",
+            "args": [
+                "/C",
+                "start cmd /K \"${fileDirname}\\${fileBasenameNoExtension}.exe\""
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            }
+        }
+        
+                   
+    ],
+    "version": "2.0.0",
+}
