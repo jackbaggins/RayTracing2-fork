@@ -39,6 +39,11 @@ struct Material
     int materialType; // 76 bytes
     int index; // padded, 80 bytes
 
+    int isEdgeHighlight = 0;
+    int pad1;
+	int pad2;
+	int pad3;
+
     Material() : color(glm::vec4(1.0f, 1.0f, 1.0f, 0.0f)), materialType(DIFFUSE) {}
 
     void makeDiffusive(const glm::vec3& col)
@@ -340,6 +345,11 @@ void getTrianglesData_(const std::string& folderRelativePath, int dirUpTraversal
                     glm::vec3 currentColor = glm::vec3(nameToMtl[mtlName].color);
                     nameToMtl[mtlName].makeGlassHighlight(currentColor);
                 }
+            }
+            else if (key == "EDGE_HIGHLIGHT")
+            {
+                std::cout << "EDGE_HIGHLIGHT found." << std::endl;
+                nameToMtl[mtlName].isEdgeHighlight = 1;
             }
             else if (key == "map_Kd")
             {

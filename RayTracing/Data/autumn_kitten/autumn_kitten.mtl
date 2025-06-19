@@ -13,7 +13,7 @@ illum 2
 map_Kd 1_DefaultMaterial_baseColor.png
 
 newmtl Material.001
-GlassHighlight
+EDGE_HIGHLIGHT
 Ns 360.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.100000 0.100000 0.100000

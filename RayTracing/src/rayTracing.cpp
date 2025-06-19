@@ -36,16 +36,18 @@
 // const std::string modelFolderName = "plants";
 // const std::string modelFolderName = "rinTex";
 // const std::string modelFolderName = "plants";
-const std::string modelFolderName = "autumn_kitten";
+// const std::string modelFolderName = "autumn_kitten";
 // const std::string modelFolderName = "robot";
 // const std::string modelFolderName = "dragon";
+const std::string modelFolderName = "goofy";
+// const std::string modelFolderName = "sleeping";
 
 const int WORK_SIZE_X = 8;
 const int WORK_SIZE_Y = 4;
 const int WORK_SIZE_Z = 1;
 
-const int SCR_WIDTH = 500;
-const int SCR_HEIGHT = 500;
+const int SCR_WIDTH = 1000;
+const int SCR_HEIGHT = 1000;
 // const int SCR_WIDTH = 400;
 // const int SCR_HEIGHT = 400;
 
@@ -61,10 +63,10 @@ const glm::vec3 LIGHT_POSITION = glm::vec3(10.0f, 100.0f, 1.0f);
 const bool BASIC_SHADING_ENVIRONMENTAL_LIGHT = false;
 
 const bool SCREENSHOT_BASIC_SHADING = false;
-const int SCREENSHOT_ENVIRONMENTAL_LIGHT = false;
+const int SCREENSHOT_ENVIRONMENTAL_LIGHT = true;
 const int SCREENSHOT_MAX_BOUNCE_COUNT = 20;
 const int SCREENSHOT_RAYS_PER_PIXEL = 64;
-const int SCREENSHOT_FRAMES = 2;
+const int SCREENSHOT_FRAMES = 10;
 
 const float CORNELL_LIGHT_BRIGHTNESS = 15.0f;
 const float CORNELL_PADDING = 0.3f;
@@ -1029,7 +1031,7 @@ int main(int argc, char* argv[])
 	// createDiverseCornellBox(rtxTriangles, bvhTriangles, 10, materials.size() - 5, materials.size() - 4, materials.size() - 3, materials.size() - 2);
 
 	// addCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, true);
-	addMirrorCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 1);
+	// addMirrorCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 1);
 	// addSideLitCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 3, 1);
 	// addSkyLightPlane(rtxTriangles, bvhTriangles, materials.size() - 2);
 

@@ -29,6 +29,11 @@ struct Material
     float refractiveIndex;
     int materialType; // 76 bytes
     int index; // padded, 80 bytes
+
+	int isEdgeHighlight;
+	int pad1;
+	int pad2;
+	int pad3;
 };
 
 struct Sphere
@@ -213,40 +218,58 @@ vec3 getEnvironmentalLight(Ray ray)
     // 4 PM sun position (low angle, slightly west)
     vec3 sunDir = normalize(vec3(0.6, 0.3, -0.2));
     
-    // Dot products
+    // Calculate angles
     float sunDot = dot(ray.direction, sunDir);
     float horizonDot = ray.direction.y;
     
-    // Sky colors and calculations
+    // Sky colors with twilight progression
     vec3 zenithColor = vec3(0.15, 0.25, 0.65);
-    vec3 oppositeColor = vec3(0.1, 0.15, 0.5);
-    vec3 horizonColor = vec3(0.7, 0.5, 0.3);
-    vec3 sunColor = vec3(1.0, 0.9, 0.7);
+    vec3 deepOrange = vec3(1.2, 0.4, 0.1);      // Deep orange near sun horizon
+    vec3 yellow = vec3(1.0, 0.8, 0.3);          // Yellow transition
+    vec3 coolBlue = vec3(0.3, 0.4, 0.7);        // Cool blue opposite side
+    vec3 groundColor = vec3(0.2, 0.15, 0.1);
     
-    float sunOpposite = dot(ray.direction, -sunDir);
-    float sunToOpposite = (sunOpposite + 1.0) * 0.5;
-    
-    // Sky gradient
-    float verticalGrad = smoothstep(0.0, 0.6, abs(horizonDot));
-    vec3 horizonBase = mix(horizonColor, vec3(0.4, 0.3, 0.45), sunToOpposite);
-    vec3 zenithBase = mix(zenithColor, oppositeColor, sunToOpposite);
-    vec3 skyColor = mix(horizonBase, zenithBase, verticalGrad);
-    
-    // Sun effects
-    float sunInfluence = pow(max(sunDot, 0.0), 16.0);
-    float sunGlow = pow(max(sunDot, 0.0), 4.0) * 0.3;
-    skyColor = mix(skyColor, vec3(1.0, 0.8, 0.4), sunGlow);
-    skyColor = mix(skyColor, sunColor, sunInfluence * 0.4);
-    
-    if (sunDot > 0.9998) {
-        skyColor = mix(skyColor, vec3(1.1, 1.0, 0.8), 0.6);
+    // Create twilight horizon gradient: deep orange -> yellow -> blue
+    float sunToOpposite = (dot(ray.direction, -sunDir) + 1.0) * 0.5;  // 0 = sun side, 1 = opposite side
+    vec3 horizonColor;
+    if (sunToOpposite < 0.5) {
+        // Sun side: deep orange to yellow
+        horizonColor = mix(deepOrange, yellow, sunToOpposite * 2.0);
+    } else {
+        // Opposite side: yellow to blue
+        horizonColor = mix(yellow, coolBlue, (sunToOpposite - 0.5) * 2.0);
     }
     
-    vec3 groundColor = horizonBase * 0.6 + vec3(0.1, 0.1, 0.1); // Brighter ground with base lighting
+    // Vertical sky gradient
+    float skyGradient = smoothstep(-0.2, 0.8, horizonDot);
+    vec3 baseColor = mix(horizonColor, zenithColor, skyGradient);
     
-    // Smooth blend between sky and ground
-    float blendFactor = smoothstep(-0.1, 0.1, horizonDot);
-    return mix(groundColor, skyColor, blendFactor);
+    // Tighter sun glow - much smaller disk
+    vec3 sunCenter = vec3(15.0, 15.0, 10.0);
+    float sunAngle = acos(clamp(sunDot, -1.0, 1.0));
+    
+    // Slightly bigger sun glow
+    float glow1 = exp(-sunAngle * 600.0);        // Tight core (reduced from 800)
+    float glow2 = exp(-sunAngle * 150.0) * 0.3;  // Small bright ring (reduced from 200)
+    float glow3 = exp(-sunAngle * 60.0) * 0.1;   // Medium falloff (reduced from 80)
+    float glow4 = exp(-sunAngle * 15.0) * 0.03;  // Soft outer glow (reduced from 20)
+    
+    float totalGlow = glow1 + glow2 + glow3 + glow4;
+    
+    // Apply sun glow
+    vec3 finalColor = baseColor + sunCenter * totalGlow;
+    
+    // Ground handling
+    if (horizonDot < 0.0) {
+        float groundBlend = smoothstep(-0.1, 0.0, horizonDot);
+        finalColor = mix(groundColor, finalColor, groundBlend);
+        
+        // Subtle ground illumination
+        float groundSunGlow = exp(-sunAngle * 15.0) * 0.2;
+        finalColor += sunCenter * groundSunGlow * 0.05;
+    }
+    
+    return finalColor;
 }
 
 HitInfo raySphereIntersect(Ray ray, Sphere sphere)
@@ -471,6 +494,8 @@ vec3 trace(Ray ray, inout uint rngState)
 			emittedLight *= 0.0f;
 			attenuation *= 0.0f;
 
+			vec3 prevDirection = ray.direction;
+
 			switch (material.materialType)
 			{
 				case DIFFUSE:
@@ -511,23 +536,14 @@ vec3 trace(Ray ray, inout uint rngState)
 					attenuation = material.color.xyz;
 
 					break;
-				case GLASS_HIGHLIGHT:
-					
-					if (bounceCount == 1)
-						attenuation = material.color.xyz;
-					else
-						attenuation = vec3(0.9999f);
-					break;
-					
-
-					// This works but make model darker due to ray being tainted
-					// attenuation = material.color.xyz;
-					// break;
 				default:
 					return vec3(1.0f, 0.0f, 1.0f);
 			}
 
-			rayColor *= attenuation;
+			if (bool(material.isEdgeHighlight) && (bounceCount > 1))
+				ray.direction = prevDirection;
+			else
+				rayColor *= attenuation;
 
 			// A simple optimization
 			float p = max(rayColor.r, max(rayColor.g, rayColor.b));
