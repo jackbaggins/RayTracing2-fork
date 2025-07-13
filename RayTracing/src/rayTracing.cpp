@@ -307,6 +307,11 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	}
 }
 
+/**
+ * @brief Handles mouse scroll input to adjust the camera's zoom or focal settings.
+ *
+ * Passes the vertical scroll offset to the camera to update its viewport vectors accordingly.
+ */
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
