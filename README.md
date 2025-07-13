@@ -12,3 +12,13 @@ Currently, the project supports loading OBJ files, the .obj (must be consist of 
 To load your favorite model of choice, please open your model in Blender, export as obj files(remember to triangulate mesh and include vertex texture coordinates), make sure the materials and texture are properly configured (a model should be a folder of 1 .obj file, 1 .mtl file and 1 textures folder, the texture name in the .mtl file must match the texture name in the textures folder), finally all models should be stored at the RayTracing/Data folder.
 
 The rendered screenshot are stored at RayTracing/Images/test.png.
+
+# Controls
+
+- `Mouse/WASD/Mouse wheel` Look/Move/Zoom
+- `Ctrl + s` take a screenshot, saves locally as `test.png`
+- `z (lower)` Defocus camera UP
+- `Z (Upper)` Defocus camera DOWN
+- `x (lower)` Add rays per pixel
+- `X (upper)` Reduce rays per pixel
+
