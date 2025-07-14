@@ -9,30 +9,30 @@
 
 struct GlobalUniforms {
 	int pad;
-    int numTextures;
-    unsigned int width;
-    unsigned int height;
+	int numTextures;
+	unsigned int width;
+	unsigned int height;
 
-    int numSpheres;
-    int numTriangles;
-    int basicShading;
-    int basicShadingShadow;
+	int numSpheres;
+	int numTriangles;
+	int basicShading;
+	int basicShadingShadow;
 
-    glm::vec4 basicShadingLightPosition;
+	glm::vec4 basicShadingLightPosition;
 
-    int environmentalLight;
-    int maxBounceCount;
-    int numRaysPerPixel;
-    unsigned int frameIndex;
+	int environmentalLight;
+	int maxBounceCount;
+	int numRaysPerPixel;
+	unsigned int frameIndex;
 
-    glm::vec4 cameraPos;
-    glm::vec4 viewportRight;
-    glm::vec4 viewportUp;
-    glm::vec4 viewportFront;
-    glm::vec4 pixelRight;
-    glm::vec4 pixelUp;
-    glm::vec4 defocusDiskRight;
-    glm::vec4 defocusDiskUp; // 24 units
+	glm::vec4 cameraPos;
+	glm::vec4 viewportRight;
+	glm::vec4 viewportUp;
+	glm::vec4 viewportFront;
+	glm::vec4 pixelRight;
+	glm::vec4 pixelUp;
+	glm::vec4 defocusDiskRight;
+	glm::vec4 defocusDiskUp; // 24 units
 };
 
 class Camera
