@@ -11,15 +11,15 @@ SSBO::SSBO(void* data, GLsizeiptr size, GLuint bindIndex) : bindingIndex(bindInd
 
 void SSBO::Bind()
 {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID);
 }
 
 void SSBO::Unbind()
 {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void SSBO::Delete()
 {
-    glDeleteBuffers(1, &ID);
+	glDeleteBuffers(1, &ID);
 }
