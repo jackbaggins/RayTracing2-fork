@@ -1244,11 +1244,8 @@ int main(int argc, char* argv[])
 
 		forceGPUCleanup();
 
-
-
-		// Start browsing in the current working directory
+		// Start model folder browsing in the current working directory
 		std::string defaultPath = std::filesystem::current_path().string();
-
 		const char* folderPath = tinyfd_selectFolderDialog("Select Model Folder", defaultPath.c_str());
 		if (!folderPath) {
 			std::cerr << "No folder was selected. Exiting." << std::endl;
@@ -1258,7 +1255,7 @@ int main(int argc, char* argv[])
 		std::string modelFolderPath = folderPath;
 		std::cout << "modelFolderPath: " << modelFolderPath << std::endl;
 
-		// Loading mesh data
+		// Init mesh objects
 		std::vector<RTXTriangle> rtxTriangles;
 		std::vector<BVHTriangle> bvhTriangles;
 		std::vector<Material> materials;
