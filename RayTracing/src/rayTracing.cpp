@@ -17,12 +17,13 @@
 #include <Assets/headers/camera.h>
 #include <Assets/headers/mesh.h>
 
-#include <Assets/headers/tinyfiledialogs.h>
+#include "Assets/headers/tinyfiledialogs.h"
 
 #include "stb/stb_image_write.h"
 
 #include <iomanip>
 #include <sstream>
+#include <filesystem>
 
 // const std::string modelFolderName = "toonHouse";
 // const std::string modelFolderName = "mccree";
@@ -32,7 +33,7 @@
 // const std::string modelFolderName = "building";
 // const std::string modelFolderName = "jet";
 // const std::string modelFolderName = "ghetto";
-const std::string modelFolderName = "campfire";
+// const std::string modelFolderName = "campfire";
 // const std::string modelFolderName = "trees_3_camps";
 // const std::string modelFolderName = "plants";
 // const std::string modelFolderName = "rinTex";
@@ -42,6 +43,7 @@ const std::string modelFolderName = "campfire";
 // const std::string modelFolderName = "dragon";
 // const std::string modelFolderName = "goofy";
 // const std::string modelFolderName = "sleeping";
+std::string modelFolderName;
 
 const int WORK_SIZE_X = 8;
 const int WORK_SIZE_Y = 4;
@@ -284,7 +286,6 @@ void screenshot(GLFWwindow* window, Camera& camera, VAO& VAO, UBO& UBO, GlobalUn
  *
  * Retrieves the camera pointer from the window's user data and passes the cursor position to it.
  */
-
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 	Camera* cameraPtr = static_cast<Camera*>(glfwGetWindowUserPointer(window));
 	cameraPtr->mouseCallback(xpos, ypos);
@@ -295,7 +296,6 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
  *
  * Enables or disables the cursor based on left or middle mouse button presses.
  */
-
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (action == GLFW_PRESS) {
 		if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
@@ -312,7 +312,6 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
  *
  * Passes the vertical scroll offset to the camera to update its viewport vectors accordingly.
  */
-
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	Camera* cameraPtr = static_cast<Camera*>(glfwGetWindowUserPointer(window));
@@ -370,6 +369,7 @@ void keyBoardInput(GLFWwindow* window, Camera& camera, float dt, bool& isScreens
 	camera.keyboardInput(inputBits, dt);
 	isScreenshot = (glfwGetKey(window, GLFW_KEY_S) && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL));
 }
+
 /**
  * @brief Adds a large rectangular skylight above the scene to simulate ambient lighting.
  *
@@ -385,7 +385,6 @@ void keyBoardInput(GLFWwindow* window, Camera& camera, float dt, bool& isScreens
  * @param bvhTriangles     Output vector of BVHTriangle objects to append the skylight geometry.
  * @param lightMtlIndex    Material index to assign to the skylight (typically emissive).
  */
-
 void addSkyLightPlane(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, int lightMtlIndex)
 {
 	BoundingBox sceneBounds;
@@ -432,7 +431,6 @@ void addSkyLightPlane(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTri
 	bvhTriangles.insert(bvhTriangles.end(), skyTrianglesBVH.begin(), skyTrianglesBVH.end());
 }
 
-
 /**
  * @brief Adds a Cornell Box geometry around an existing scene for lighting and benchmarking purposes.
  *
@@ -452,7 +450,6 @@ void addSkyLightPlane(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTri
  * @param lightMtlIndex     Material index to apply to the light geometry (for emissive surfaces).
  * @param lightEnabled      Whether to add the ceiling light geometry to the scene.
  */
-
 void addCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, float lightSize, float padPercentage, int lightMtlIndex, bool lightEnabled)
 {
 	BoundingBox sceneBounds;
@@ -549,7 +546,6 @@ void addCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriang
 	}
 }
 
-// Function 1: Mirror Cornell Box (all walls are specular mirrors) - Fixed ceiling light
 /**
  * @brief Adds a mirrored Cornell Box around the current scene bounds with an optional ceiling light.
  *
@@ -570,7 +566,6 @@ void addCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriang
  * @param lightMtlIndex    Material index to assign to the ceiling light surface (emissive).
  * @param mirrorMtlIndex   Material index to assign to all Cornell Box wall surfaces (mirror-like).
  */
-
 void addMirrorCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, float lightSize, float padPercentage, int lightMtlIndex, int mirrorMtlIndex)
 {
 	BoundingBox sceneBounds;
@@ -692,7 +687,6 @@ void addMirrorCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVH
  * @param wallMtlIndex     Material index to assign to all Cornell Box walls.
  * @param rotate           If true, places the lights on front/back walls instead of left/right.
  */
-
 void addSideLitCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, float lightSize, float padPercentage, int lightMtlIndex, int wallMtlIndex, bool rotate = false)
 {
 	BoundingBox sceneBounds;
@@ -852,7 +846,6 @@ void addSideLitCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BV
 	bvhTriangles.insert(bvhTriangles.end(), secondLightBVH.begin(), secondLightBVH.end());
 }
 
-// Helper function to add a cube - Fixed triangle winding
 /**
  * @brief Adds a rotated, axis-aligned cube to the scene geometry.
  *
@@ -871,7 +864,6 @@ void addSideLitCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BV
  * @param rotation         Euler angles (in radians) to rotate the cube around X, Y, and Z axes.
  * @param materialIndex    Material index to assign to all cube triangles in the RTX triangle buffer.
  */
-
 void addCube(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles,
 	glm::vec3 center, glm::vec3 size, glm::vec3 rotation, int materialIndex)
 {
@@ -930,7 +922,6 @@ void addCube(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& b
 	}
 }
 
-// Function 3: Classic Cornell Box scene generator - Fixed face orientations
 /**
  * @brief Constructs a classic Cornell Box scene with colored walls, a ceiling light, and two interior cubes.
  *
@@ -955,7 +946,6 @@ void addCube(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& b
  * @param whiteMtlIndex    Material index for white walls and interior cubes.
  * @param lightMtlIndex    Material index for the ceiling light (typically emissive).
  */
-
 void createClassicCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, float roomSize, int redMtlIndex, int greenMtlIndex, int whiteMtlIndex, int lightMtlIndex)
 {
 	float half = roomSize * 0.5f;
@@ -1050,7 +1040,6 @@ void createClassicCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector
 		glm::vec3(0.0f, glm::radians(16.5f), 0.0f), whiteMtlIndex);
 }
 
-// Function 4: Diverse Cornell Box with various cubes
 /**
  * @brief Builds an extended Cornell Box scene featuring a variety of materials and geometry for visual diversity and shading complexity.
  *
@@ -1079,7 +1068,6 @@ void createClassicCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector
  * @param checkerMtlIndex  Material index for checkered-texture cubes or platforms.
  * @param metalMtlIndex    Material index for metallic cubes with specular surfaces.
  */
-
 void createDiverseCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector<BVHTriangle>& bvhTriangles, float roomSize, int redMtlIndex, int greenMtlIndex, int whiteMtlIndex, int lightMtlIndex,
 	int glassMtlIndex, int mirrorMtlIndex, int checkerMtlIndex, int metalMtlIndex)
 {
@@ -1132,7 +1120,6 @@ void createDiverseCornellBox(std::vector<RTXTriangle>& rtxTriangles, std::vector
 /**
  * @brief Callback to update the OpenGL viewport when the window is resized.
  */
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -1156,7 +1143,6 @@ GLfloat ndcVertices[] =
  * Unbinds all texture/image units, buffers, framebuffers, and shader programs.
  * Clears OpenGL errors and issues a memory barrier followed by `glFinish()` to ensure GPU operations complete.
  */
-
 void resetOpenGLState() {
 	// Reset all texture units
 	for (int i = 0; i < 32; i++) {
@@ -1184,6 +1170,7 @@ void resetOpenGLState() {
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 	glFinish();
 }
+
 /**
  * @brief Forces a full GPU cleanup and synchronization of all pending OpenGL operations.
  *
@@ -1205,8 +1192,6 @@ void resetOpenGLState() {
  * - Clears all pending OpenGL errors using `glGetError()`.
  * - Issues a memory barrier and a `glFinish()` to ensure the pipeline is idle.
  */
-
-
 void forceGPUCleanup() {
 	// Force completion of all GPU operations
 	glFinish();
@@ -1224,225 +1209,238 @@ void forceGPUCleanup() {
 
 int main(int argc, char* argv[])
 {
-	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	try {
+		// glfw: initialize and configure
+		// ------------------------------
+		glfwInit();
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// glfw window creation
-	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		// glfw window creation
+		// --------------------
+		GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+		if (window == NULL)
+		{
+			std::cout << "Failed to create GLFW window" << std::endl;
+			glfwTerminate();
+			return -1;
+		}
+		glfwMakeContextCurrent(window);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+		glfwSwapInterval(0);
+
+
+		// glad: load all OpenGL function pointers
+		// ---------------------------------------
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			std::cout << "Failed to initialize GLAD" << std::endl;
+			return -1;
+		}
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+
+		forceGPUCleanup();
+
+
+
+		// Start browsing in the current working directory
+		std::string defaultPath = std::filesystem::current_path().string();
+
+		const char* folderPath = tinyfd_selectFolderDialog("Select Model Folder", defaultPath.c_str());
+		if (!folderPath) {
+			std::cerr << "No folder was selected. Exiting." << std::endl;
+			return 1;
+		}
+
+		std::string modelFolderPath = folderPath;
+		std::cout << "modelFolderPath: " << modelFolderPath << std::endl;
+
+		// Loading mesh data
+		std::vector<RTXTriangle> rtxTriangles;
+		std::vector<BVHTriangle> bvhTriangles;
+		std::vector<Material> materials;
+		std::vector<Texture2D> textures;
+
+		// Call with the user-selected folder path
+		getTrianglesData_(modelFolderPath, 1, rtxTriangles, bvhTriangles, materials, textures);
+
+
+		Material red;
+		red.makeDiffusive(glm::vec3(1.0f, 0.0f, 0.0f));
+		materials.push_back(red);
+		Material green;
+		green.makeDiffusive(glm::vec3(0.0f, 1.0f, 0.0f));
+		materials.push_back(green);
+
+		Material wall;
+		wall.makeDiffusive(glm::vec3(1.0f));
+		materials.push_back(wall);
+		Material light;
+		light.makeLight(glm::vec3(1.0f), CORNELL_LIGHT_BRIGHTNESS);
+		materials.push_back(light);
+		Material mirror;
+		mirror.makeSpecular(glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 1.0f);
+		materials.push_back(mirror);
+
+		// createClassicCornellBox(rtxTriangles, bvhTriangles, 10, materials.size() - 5, materials.size() - 4, materials.size() - 3, materials.size() - 2);
+		// createDiverseCornellBox(rtxTriangles, bvhTriangles, 10, materials.size() - 5, materials.size() - 4, materials.size() - 3, materials.size() - 2);
+
+		// addCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, true);
+		// addMirrorCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 1);
+		// addSideLitCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 3, 1);
+		// addSkyLightPlane(rtxTriangles, bvhTriangles, materials.size() - 2);
+
+		BVH BVH(bvhTriangles, rtxTriangles);
+
+		// for (Material& mat : materials)
+		// 	mat.addSpecular(1.0f, 0.02f);
+			// mat.makeGlass(glm::vec3(1.0f), 1.6f);
+			// mat.makeDiffusive(glm::vec3(0.8, 0.8, 0.8));
+
+		// build and compile shaders
+		// -------------------------
+		std::string shaderFolderPath = getPath("Assets\\Shaders", 1);
+		Shader renderShader(shaderFolderPath + "\\vert.glsl", shaderFolderPath + "\\newFrag.glsl");
+		ComputeShader computeShader(shaderFolderPath + "\\compute.glsl");
+		std::cout << "Shader folder path: " << shaderFolderPath << std::endl;
+		renderShader.Activate();
+		renderShader.setInt("tex", 5);
+
+		int textureUnits[MAX_TEXTURES] = { 0, 1, 2, 3, 4 };
+		renderShader.setIntArray("textures", textureUnits, sizeof(textureUnits));
+
+		// Texture for the compute shader to draw on
+		Texture2D screenTexture(SCR_WIDTH, SCR_HEIGHT, GL_TEXTURE5);
+		glBindImageTexture(0, screenTexture.ID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		for (int i = 0; i < textures.size(); i++)
+		{
+			computeShader.setInt(("texture" + std::to_string(i)).c_str(), i);
+			textures[i].SetActive();
+			textures[i].Bind();
+		}
+
+		// SSBOs for triangles and nodes
+		SSBO trianglesSSBO(rtxTriangles.data(), sizeof(RTXTriangle) * rtxTriangles.size(), 1);
+		SSBO nodesSSBO(BVH.allNodes.data(), sizeof(Node) * BVH.allNodes.size(), 2);
+		SSBO materialsSSBO(materials.data(), sizeof(Material) * materials.size(), 3);
+
+		// Set shader's constants
+		computeShader.bindSSBOToBlock(trianglesSSBO, "TrianglesBlock");
+		computeShader.bindSSBOToBlock(nodesSSBO, "NodesBlock");
+		computeShader.bindSSBOToBlock(materialsSSBO, "MaterialsBlock");
+
+		// Transfer uniforms with UBO
+		GlobalUniforms uniforms;
+		UBO UBO(3, sizeof(GlobalUniforms));
+
+		// Create camera
+		Camera camera = Camera(SCR_WIDTH, SCR_HEIGHT, maxSpeed, cameraPos, hfov, pitch, yaw, focusDistance, defocusAngle, zoom);
+
+		// Is later used by glfwGetWindowUserPointer in glfwSetCursorPosCallback and glfwSetScrollCallback to get the camera, avoiding global variables
+		glfwSetWindowUserPointer(window, &camera);
+		glfwSetCursorPosCallback(window, mouseCallback);
+		glfwSetScrollCallback(window, scrollCallback);
+		glfwSetMouseButtonCallback(window, mouseButtonCallback);
+
+
+		// VAO, VBO
+		VAO VAO;
+		VAO.Bind();
+		VBO VBO(ndcVertices, sizeof(ndcVertices));
+		VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (void*)0);
+		VAO.Unbind();
+		VBO.Unbind();
+
+		// render loop
+		// -----------
+		int frameIndex = 0;
+		float lastFrame = glfwGetTime();
+		while (!glfwWindowShouldClose(window))
+		{
+			// Get deltaTime
+			float currentFrame = glfwGetTime();
+			float deltaTime = currentFrame - lastFrame;
+			if (deltaTime < SPF)
+				continue;
+			lastFrame = currentFrame;
+
+			// Set window title with FPS
+			std::ostringstream fps;
+			fps << std::fixed << std::setprecision(2) << 1.0f / deltaTime;
+			std::string title = "Demo - FPS:" + fps.str();
+			glfwSetWindowTitle(window, title.c_str());
+
+			// Keyboard input
+			bool isScreenshot;
+			keyBoardInput(window, camera, deltaTime, isScreenshot);
+
+			// Screenshot
+			bool terminateProgram = false;
+			if (isScreenshot)
+				screenshot(window, camera, VAO, UBO, uniforms, renderShader, computeShader, screenTexture, terminateProgram);
+
+			if (terminateProgram)
+				glfwSetWindowShouldClose(window, true);
+
+			// Uniforms
+			uniforms.numTextures = textures.size();
+			uniforms.width = SCR_WIDTH;
+			uniforms.height = SCR_HEIGHT;
+			uniforms.numSpheres = 0;
+			uniforms.numTriangles = rtxTriangles.size();
+			uniforms.basicShading = BASIC_SHADING;
+			uniforms.basicShadingShadow = BASIC_SHADING_SHADOW;
+			uniforms.basicShadingLightPosition = glm::vec4(LIGHT_POSITION, 0.0f);
+			uniforms.environmentalLight = BASIC_SHADING_ENVIRONMENTAL_LIGHT;
+			uniforms.maxBounceCount = MAX_BOUNCE_COUNT;
+			uniforms.numRaysPerPixel = numRaysPerPixel;
+			uniforms.frameIndex = frameIndex;
+			frameIndex++;
+			// Update uniforms based on changes of position, rotation, and zooming
+			camera.updateUniforms(uniforms);
+
+			UBO.Update(&uniforms, sizeof(GlobalUniforms));
+
+			computeShader.Activate();
+			glDispatchCompute(ceil(SCR_WIDTH / WORK_SIZE_X), ceil(SCR_HEIGHT / WORK_SIZE_Y), 1);
+			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+			// render image to quad
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			renderShader.Activate();
+			VAO.Bind();
+
+			screenTexture.SetActive();
+			screenTexture.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+		}
+
+		screenTexture.Delete();
+		computeShader.Delete();
+		renderShader.Delete();
+		VAO.Delete();
+		VBO.Delete();
+		UBO.Delete();
+		trianglesSSBO.Delete();
+		nodesSSBO.Delete();
+		materialsSSBO.Delete();
+
+		for (Texture2D& tex : textures)
+			tex.Delete();
+
 		glfwTerminate();
-		return -1;
+
+		return EXIT_SUCCESS;
 	}
-	glfwMakeContextCurrent(window);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSwapInterval(0);
-
-
-	// glad: load all OpenGL function pointers
-	// ---------------------------------------
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-
-	forceGPUCleanup();
-
-	// Loading mesh data
-	std::vector<RTXTriangle> rtxTriangles;
-	std::vector<BVHTriangle> bvhTriangles;
-	std::vector<Material> materials;
-	std::vector<Texture2D> textures;
-
-	// Prompt user to select a directory
-	const char* folderPath = tinyfd_selectFolderDialog("Select Model Folder", nullptr);
-
-	if (!folderPath) {
-		std::cerr << "No folder was selected. Exiting." << std::endl;
+	catch (const std::exception& e) {
+		std::cerr << "[Fatal] Exception caught in main: " << e.what() << std::endl;
 		return 1;
 	}
 
-	std::string modelFolderPath = folderPath;
-
-	getTrianglesData_("Data\\" + modelFolderName, 1, rtxTriangles, bvhTriangles, materials, textures);
-
-	Material red;
-	red.makeDiffusive(glm::vec3(1.0f, 0.0f, 0.0f));
-	materials.push_back(red);
-	Material green;
-	green.makeDiffusive(glm::vec3(0.0f, 1.0f, 0.0f));
-	materials.push_back(green);
-
-	Material wall;
-	wall.makeDiffusive(glm::vec3(1.0f));
-	materials.push_back(wall);
-	Material light;
-	light.makeLight(glm::vec3(1.0f), CORNELL_LIGHT_BRIGHTNESS);
-	materials.push_back(light);
-	Material mirror;
-	mirror.makeSpecular(glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 1.0f);
-	materials.push_back(mirror);
-
-	// createClassicCornellBox(rtxTriangles, bvhTriangles, 10, materials.size() - 5, materials.size() - 4, materials.size() - 3, materials.size() - 2);
-	// createDiverseCornellBox(rtxTriangles, bvhTriangles, 10, materials.size() - 5, materials.size() - 4, materials.size() - 3, materials.size() - 2);
-
-	// addCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, true);
-	// addMirrorCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 1);
-	// addSideLitCornellBox(rtxTriangles, bvhTriangles, CORNELL_LIGHT_SIZE, CORNELL_PADDING, materials.size() - 2, materials.size() - 3, 1);
-	// addSkyLightPlane(rtxTriangles, bvhTriangles, materials.size() - 2);
-
-	BVH BVH(bvhTriangles, rtxTriangles);
-
-	// for (Material& mat : materials)
-	// 	mat.addSpecular(1.0f, 0.02f);
-		// mat.makeGlass(glm::vec3(1.0f), 1.6f);
-		// mat.makeDiffusive(glm::vec3(0.8, 0.8, 0.8));
-
-	// build and compile shaders
-	// -------------------------
-	std::string shaderFolderPath = getPath("Assets\\Shaders", 1);
-	Shader renderShader(shaderFolderPath + "\\vert.glsl", shaderFolderPath + "\\newFrag.glsl");
-	ComputeShader computeShader(shaderFolderPath + "\\compute.glsl");
-	std::cout << "Shader folder path: " << shaderFolderPath << std::endl;
-	renderShader.Activate();
-	renderShader.setInt("tex", 5);
-
-	int textureUnits[MAX_TEXTURES] = { 0, 1, 2, 3, 4 };
-	renderShader.setIntArray("textures", textureUnits, sizeof(textureUnits));
-
-	// Texture for the compute shader to draw on
-	Texture2D screenTexture(SCR_WIDTH, SCR_HEIGHT, GL_TEXTURE5);
-	glBindImageTexture(0, screenTexture.ID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	for (int i = 0; i < textures.size(); i++)
-	{
-		computeShader.setInt(("texture" + std::to_string(i)).c_str(), i);
-		textures[i].SetActive();
-		textures[i].Bind();
-	}
-
-	// SSBOs for triangles and nodes
-	SSBO trianglesSSBO(rtxTriangles.data(), sizeof(RTXTriangle) * rtxTriangles.size(), 1);
-	SSBO nodesSSBO(BVH.allNodes.data(), sizeof(Node) * BVH.allNodes.size(), 2);
-	SSBO materialsSSBO(materials.data(), sizeof(Material) * materials.size(), 3);
-
-	// Set shader's constants
-	computeShader.bindSSBOToBlock(trianglesSSBO, "TrianglesBlock");
-	computeShader.bindSSBOToBlock(nodesSSBO, "NodesBlock");
-	computeShader.bindSSBOToBlock(materialsSSBO, "MaterialsBlock");
-
-	// Transfer uniforms with UBO
-	GlobalUniforms uniforms;
-	UBO UBO(3, sizeof(GlobalUniforms));
-
-	// Create camera
-	Camera camera = Camera(SCR_WIDTH, SCR_HEIGHT, maxSpeed, cameraPos, hfov, pitch, yaw, focusDistance, defocusAngle, zoom);
-
-	// Is later used by glfwGetWindowUserPointer in glfwSetCursorPosCallback and glfwSetScrollCallback to get the camera, avoiding global variables
-	glfwSetWindowUserPointer(window, &camera);
-	glfwSetCursorPosCallback(window, mouseCallback);
-	glfwSetScrollCallback(window, scrollCallback);
-	glfwSetMouseButtonCallback(window, mouseButtonCallback);
-
-
-	// VAO, VBO
-	VAO VAO;
-	VAO.Bind();
-	VBO VBO(ndcVertices, sizeof(ndcVertices));
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (void*)0);
-	VAO.Unbind();
-	VBO.Unbind();
-
-	// render loop
-	// -----------
-	int frameIndex = 0;
-	float lastFrame = glfwGetTime();
-	while (!glfwWindowShouldClose(window))
-	{
-		// Get deltaTime
-		float currentFrame = glfwGetTime();
-		float deltaTime = currentFrame - lastFrame;
-		if (deltaTime < SPF)
-			continue;
-		lastFrame = currentFrame;
-
-		// Set window title with FPS
-		std::ostringstream fps;
-		fps << std::fixed << std::setprecision(2) << 1.0f / deltaTime;
-		std::string title = "Demo - FPS:" + fps.str();
-		glfwSetWindowTitle(window, title.c_str());
-
-		// Keyboard input
-		bool isScreenshot;
-		keyBoardInput(window, camera, deltaTime, isScreenshot);
-
-		// Screenshot
-		bool terminateProgram = false;
-		if (isScreenshot)
-			screenshot(window, camera, VAO, UBO, uniforms, renderShader, computeShader, screenTexture, terminateProgram);
-
-		if (terminateProgram)
-			glfwSetWindowShouldClose(window, true);
-
-		// Uniforms
-		uniforms.numTextures = textures.size();
-		uniforms.width = SCR_WIDTH;
-		uniforms.height = SCR_HEIGHT;
-		uniforms.numSpheres = 0;
-		uniforms.numTriangles = rtxTriangles.size();
-		uniforms.basicShading = BASIC_SHADING;
-		uniforms.basicShadingShadow = BASIC_SHADING_SHADOW;
-		uniforms.basicShadingLightPosition = glm::vec4(LIGHT_POSITION, 0.0f);
-		uniforms.environmentalLight = BASIC_SHADING_ENVIRONMENTAL_LIGHT;
-		uniforms.maxBounceCount = MAX_BOUNCE_COUNT;
-		uniforms.numRaysPerPixel = numRaysPerPixel;
-		uniforms.frameIndex = frameIndex;
-		frameIndex++;
-		// Update uniforms based on changes of position, rotation, and zooming
-		camera.updateUniforms(uniforms);
-
-		UBO.Update(&uniforms, sizeof(GlobalUniforms));
-
-		computeShader.Activate();
-		glDispatchCompute(ceil(SCR_WIDTH / WORK_SIZE_X), ceil(SCR_HEIGHT / WORK_SIZE_Y), 1);
-		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
-		// render image to quad
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		renderShader.Activate();
-		VAO.Bind();
-
-		screenTexture.SetActive();
-		screenTexture.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	screenTexture.Delete();
-	computeShader.Delete();
-	renderShader.Delete();
-	VAO.Delete();
-	VBO.Delete();
-	UBO.Delete();
-	trianglesSSBO.Delete();
-	nodesSSBO.Delete();
-	materialsSSBO.Delete();
-
-	for (Texture2D& tex : textures)
-		tex.Delete();
-
-	glfwTerminate();
-
-	return EXIT_SUCCESS;
 }
